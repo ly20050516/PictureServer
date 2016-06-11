@@ -1,11 +1,20 @@
 package com.ly.picture;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+
+import com.alibaba.fastjson.JSON;
+import com.ly.image.bean.ImageData;
+import com.ly.image.bean.ImageWrapper;
+import com.ly.picture.bean.PictureData;
 
 
 public class PicturesRepository {
 
-	static String []URLS = {
+	final static String []URLS = {
 		"http://bizhi.4493.com/uploads/allimg/141010/4-141010150301.jpg",
 		"http://www.benbenla.cn/images/20120330/benbenla-04b.jpg",
 		"http://www.deskcar.com/desktop/fengjing/200895150214/21.jpg",
@@ -107,23 +116,102 @@ public class PicturesRepository {
 		"http://online.sccnn.com/desk2/1486/3SFG_1026.jpg"		
 	};
 	
-	ArrayList<String> allPictures;
+		
+	final static String urlString = "http://image.baidu.com/search/flip?tn=baiduimage&ie=utf-8";
+	
+	final static String tnKey = "tn";
+	final static String ieKey = "ie";
+	final static String wordKeyString = "word";
+	final static String pnKeyString = "pn";
+	final static String gsmKey = "gsm";
+	
+	final static String tnString = "baiduimage";
+	final static String ieString = "utf-8";
+	final static String MATCH_IMAGE_DATA_START = "flip.setData('imgData',";
+	final static String MATCH_IMAGE_DATA_END = ");";
+	
+	final long gsm = 900000050L;	
 	
 	public void init(){
-		allPictures = new ArrayList<String>();
-		for(int i = 0;i < URLS.length;i ++){
-			allPictures.add(URLS[i]);
-		}
+		
 	}
 	
-	public ArrayList<String> getAllPictures(){
-		return allPictures == null ? new ArrayList<String>() : allPictures ;
+	private ArrayList<PictureData> getAllPictures(){
+		
+		ArrayList<PictureData> allPictures = new ArrayList<PictureData>();
+		for(int i = 0;i < URLS.length;i ++){
+			PictureData pictureData = new PictureData();
+			pictureData.setThumbURL(URLS[i]);
+			pictureData.setObjURL(URLS[i]);
+			allPictures.add(pictureData);
+		}
+		return allPictures == null ? new ArrayList<PictureData>() : allPictures ;
+	}
+	
+	public ArrayList<PictureData> getAllPictures(String keyword,String pn,int counts){
+		
+		ArrayList<PictureData> allPictures = new ArrayList<PictureData>();
+		
+		try {
+			// http://image.baidu.com/search/flip?tn=baiduimage&ie=utf-8&word=%E9%A3%8E%E6%99%AF&pn=60
+			
+			StringBuilder sBuilder = new StringBuilder(urlString);
+			sBuilder.append("&" + wordKeyString + "=" + keyword);
+			sBuilder.append("&" + pnKeyString + "=" + pn);
+			System.out.println(sBuilder.toString());
+			URL url = new URL(sBuilder.toString());
+			HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+			httpURLConnection.setRequestMethod("GET");
+			httpURLConnection.connect();
+			
+			if(httpURLConnection.getResponseCode() == HttpURLConnection.HTTP_OK){
+				BufferedReader reader = new BufferedReader(new InputStreamReader(httpURLConnection.getInputStream(),"utf-8"));
+				
+				String lines;
+				sBuilder = new StringBuilder();
+				while ((lines = reader.readLine()) != null){  
+				        sBuilder.append(lines);			        
+				}  
+				reader.close();
+				lines = sBuilder.toString();
+				
+				int start = lines.indexOf(MATCH_IMAGE_DATA_START);
+				int end = lines.indexOf(MATCH_IMAGE_DATA_END, start);
+				lines = lines.substring(start, end + MATCH_IMAGE_DATA_END.length());
+				start = MATCH_IMAGE_DATA_START.length();
+				lines = lines.substring(start, lines.length() - 2).trim();
+				ImageWrapper imageWrapper = JSON.parseObject(lines,ImageWrapper.class);
+				
+				ArrayList<ImageData> datas = imageWrapper.getData();
+				if(datas.size() < counts){
+					counts = datas.size();
+				}
+				
+				for (int i = 0; i < counts; i++) {
+					PictureData pictureData = new PictureData();
+					ImageData imgData = datas.get(i);
+					if (imgData == null) {
+						continue;
+					}
+					pictureData.setThumbURL(imgData.getThumbURL());
+					pictureData.setObjURL(imgData.getObjURL());
+					allPictures.add(pictureData);
+				}
+			}
+
+			httpURLConnection.disconnect();
+		}catch (Exception e) {
+			allPictures = getAllPictures();
+			e.printStackTrace();
+		}catch (Error e) {
+			allPictures = getAllPictures();
+			e.printStackTrace();
+		}
+		
+		return allPictures;
 	}
 	
 	public void destroy(){
-		if(allPictures != null) {
-			allPictures.clear();
-			allPictures = null;
-		}
+		
 	}
 }

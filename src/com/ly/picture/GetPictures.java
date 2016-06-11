@@ -20,6 +20,10 @@ import com.ly.picture.bean.Pictures;
 public class GetPictures extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
+	final static String KEY_WORD = "KEY_WORD";
+	final static String PAGE_NO = "PAGE_NO";
+	final static String PAGE_COUNT = "PAGE_COUNT";
+	
 	PicturesRepository mPicturesRepository = null;
        
     /**
@@ -63,7 +67,27 @@ public class GetPictures extends HttpServlet {
 		Pictures pictures = new Pictures();
 		pictures.setClientName(request.getRemoteAddr());
 		pictures.setServerName("GetPictures");
-		pictures.setPictures(mPicturesRepository.getAllPictures());
+		String keyword = request.getParameter(KEY_WORD);
+		String pnString = request.getParameter(PAGE_NO);
+		String countString = request.getParameter(PAGE_COUNT);
+		
+		System.out.println("keyword " + keyword);
+		System.out.println("pnString " + pnString);
+		System.out.println("countString " + countString);
+		
+		if(keyword == null){
+			keyword = "√¿≈Æ";
+		}
+		
+		int counts = 20;
+		
+		try {
+			counts = Integer.parseInt(countString);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		pictures.setPictures(mPicturesRepository.getAllPictures(keyword,pnString,counts));
 		
 		String jsonString = JSON.toJSONString(pictures);
 		System.out.println(jsonString);
