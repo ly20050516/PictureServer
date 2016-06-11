@@ -131,7 +131,7 @@ public class PicturesRepository {
 	final static String MATCH_IMAGE_DATA_END = ");";
 	
 	final long gsm = 900000050L;	
-	
+	public int realResponsCounts;
 	public void init(){
 		
 	}
@@ -151,7 +151,7 @@ public class PicturesRepository {
 	public ArrayList<PictureData> getAllPictures(String keyword,String pn,int counts){
 		
 		ArrayList<PictureData> allPictures = new ArrayList<PictureData>();
-		
+		realResponsCounts = 0;
 		try {
 			// http://image.baidu.com/search/flip?tn=baiduimage&ie=utf-8&word=%E9%A3%8E%E6%99%AF&pn=60
 			
@@ -183,6 +183,7 @@ public class PicturesRepository {
 				ImageWrapper imageWrapper = JSON.parseObject(lines,ImageWrapper.class);
 				
 				ArrayList<ImageData> datas = imageWrapper.getData();
+				realResponsCounts = datas.size();
 				if(datas.size() < counts){
 					counts = datas.size();
 				}

@@ -88,6 +88,7 @@ public class GetPictures extends HttpServlet {
 		}
 		
 		pictures.setPictures(mPicturesRepository.getAllPictures(keyword,pnString,counts));
+		pictures.setRealCounts(mPicturesRepository.realResponsCounts);
 		
 		String jsonString = JSON.toJSONString(pictures);
 		System.out.println(jsonString);
