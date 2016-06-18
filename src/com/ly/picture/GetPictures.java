@@ -76,7 +76,7 @@ public class GetPictures extends HttpServlet {
 		System.out.println("countString " + countString);
 		
 		if(keyword == null){
-			keyword = "√¿≈Æ";
+			keyword = "Android";
 		}
 		
 		int counts = 20;
