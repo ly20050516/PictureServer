@@ -61,7 +61,7 @@ public class SpringMVCContronller {
 		}
 		
 		
-		pictures.setPictures(picturesRepository.getAllPictures(KEY_WORD,PAGE_COUNT,counts));
+		pictures.setPictures(picturesRepository.getAllPictures(KEY_WORD,PAGE_NO,counts));
 		pictures.setRealCounts(picturesRepository.realResponsCounts);
 		
 		return pictures;
