@@ -15,7 +15,8 @@
 	<!-- if you use annotation you must configure following setting -->
 	<mvc:annotation-driven>
 		<mvc:message-converters>
-			<bean id="jsonConveter" class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
+			<bean id="jsonConveter"
+				class="com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter">
 				<property name="supportedMediaTypes">
 					<list>
 						<value>text/html;charset=UTF-8</value>

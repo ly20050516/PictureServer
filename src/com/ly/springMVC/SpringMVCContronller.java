@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.ly.picture.PicturesRepository;
 import com.ly.picture.bean.Pictures;
 import com.ly.springMVC.bean.Person;

@@ -1,4 +1,4 @@
-package com.ly.picture;
+package com.ly.servlet;
 
 import java.io.IOException;
 
@@ -10,7 +10,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.impl.Log4JLogger;
+
 import com.alibaba.fastjson.JSON;
+import com.ly.picture.PicturesRepository;
 import com.ly.picture.bean.Pictures;
 
 /**
@@ -62,6 +65,7 @@ public class GetPictures extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
 		System.out.println("doPost() " + this + " request " + request + " response " + response + " thread current Name " + Thread.currentThread().getName());
 		
 		Pictures pictures = new Pictures();
@@ -75,6 +79,8 @@ public class GetPictures extends HttpServlet {
 		System.out.println("pnString " + pnString);
 		System.out.println("countString " + countString);
 		
+		String ssid = request.getSession().getId();
+		System.out.println("ssid = " + ssid);
 		if(keyword == null){
 			keyword = "Android";
 		}
@@ -91,7 +97,6 @@ public class GetPictures extends HttpServlet {
 		pictures.setRealCounts(mPicturesRepository.realResponsCounts);
 		
 		String jsonString = JSON.toJSONString(pictures);
-		System.out.println(jsonString);
 		
 		response.getOutputStream().write(jsonString.getBytes());
 	}
