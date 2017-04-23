@@ -175,6 +175,7 @@ public class PicturesRepository {
 				reader.close();
 				lines = sBuilder.toString();
 				
+				System.out.println(lines);
 				int start = lines.indexOf(MATCH_IMAGE_DATA_START);
 				int end = lines.indexOf(MATCH_IMAGE_DATA_END, start);
 				lines = lines.substring(start, end + MATCH_IMAGE_DATA_END.length());
